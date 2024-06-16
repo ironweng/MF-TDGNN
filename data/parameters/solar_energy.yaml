@@ -1,0 +1,36 @@
+---
+base_dir: data/model
+log_level: INFO
+data:
+  batch_size: 128
+  dataset_dir: data/solar-energy
+  test_batch_size: 128
+  val_batch_size: 128
+
+model:
+  cl_decay_steps: 2000
+  filter_type: dual_random_walk
+  horizon: 1
+  input_dim: 2
+  max_diffusion_step: 2
+  num_nodes: 137
+  num_rnn_layers: 1
+  output_dim: 1
+  rnn_units: 64
+  seq_len: 168
+  use_curriculum_learning: true
+  dim_fc: 504288
+  dim_fre_fc: 504504
+train:
+  dropout: 0
+  base_lr: 0.001
+  epochs: 100
+  max_grad_norm: 5
+  min_learning_rate: 2.0e-06
+  patience: 40
+  steps: [20, 30, 40]
+  test_every_n_epochs: 10
+  knn_k: 10
+  epoch_use_graph_optimization: 50
+  datasets_train_rate: 0.6
+  use_frequency: true

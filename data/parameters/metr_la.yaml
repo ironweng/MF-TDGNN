@@ -1,0 +1,38 @@
+---
+base_dir: data/model
+log_level: INFO
+data:
+  batch_size: 64
+  dataset_dir: data/METR-LA
+  test_batch_size: 64
+  val_batch_size: 64
+  graph_pkl_filename: data/sensor_graph/adj_mx.pkl
+
+model:
+  cl_decay_steps: 2000
+  filter_type: dual_random_walk
+  horizon: 12
+  input_dim: 2
+  max_diffusion_step: 3
+  num_nodes: 207
+  num_rnn_layers: 1
+  output_dim: 1
+  rnn_units: 64
+  seq_len: 12
+  use_curriculum_learning: true
+  dim_fc: 383552
+  dim_fre_fc: 383768
+
+train:
+  dropout: 0
+  base_lr: 0.001
+  epochs: 100
+  max_grad_norm: 5
+  min_learning_rate: 2.0e-06
+  patience: 40
+  steps: [20, 30, 40]
+  test_every_n_epochs: 10
+  knn_k: 10
+  epoch_use_graph_optimization: 100
+  datasets_train_rate: 0.7
+  use_frequency: true
