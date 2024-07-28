@@ -1,5 +1,5 @@
 # Multivariate Time Series Forecasting based on Deep Graph Construction and Feature Graph Learning
-
+This repository contains code for the paper, Multivariate Time Series Forecasting based on Deep Graph Construction and Feature Graph Learning. (The code is being sorted out and we will continue to update it.)
 
 ## Data Preparation
 
