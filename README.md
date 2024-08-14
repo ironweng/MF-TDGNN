@@ -1,6 +1,13 @@
 # Multivariate Time Series Forecasting based on Deep Graph Construction and Feature Graph Learning
 This repository contains code for the paper, Multivariate Time Series Forecasting based on Deep Graph Construction and Feature Graph Learning. (The code is being sorted out and we will continue to update it.)
 
+## Versions of various tools and packages
+python==3.9
+pytorch==1.12.1
+cuda=11.6
+numpy==1.22.4
+pandas==1.4.5
+
 ## Data Preparation
 
 ### Multivariate time series datasets
