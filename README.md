@@ -3,10 +3,14 @@ This repository contains code for the paper, Multivariate Time Series Forecastin
 
 ## Versions of various tools and packages
 python==3.9
+
 pytorch==1.12.1
+
 cuda=11.6
-numpy==1.22.4
-pandas==1.4.5
+
+numpy==1.21.5
+
+pandas==1.4.2
 
 ## Data Preparation
 
