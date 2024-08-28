@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
-from model import MFDGNNModel
+from model import MFTDGNNModel
 from utils import load_dataset,StandardScaler
 from loss import masked_mae_loss, masked_mape_loss, masked_rmse_loss, masked_mse_loss
 import pandas as pd
@@ -25,7 +25,7 @@ def pkl_load(file_path):
         data=pickle.load(f)
     return data
 
-class MFDGNNSupervisor:
+class MFTDGNNSupervisor:
     def __init__(self, **configparams):
         self._configparams = configparams
         self._data_configparams = configparams.get('data')
@@ -104,7 +104,7 @@ class MFDGNNSupervisor:
             self._model_configparams.get('horizon', 1))  # for the decoder 这个参数用于解码器（decoder）。它表示模型在未来的多少个时间步骤上进行预测。
 
 
-        self.MFDGNN_model=MFDGNNModel(self.sampling, **self._model_configparams)
+        self.MFTDGNN_model=MFTDGNNModel(self.sampling, **self._model_configparams)
         print("Model created")
         self.epochs = self._train_configparams.get('epochs')
 
@@ -116,7 +116,7 @@ class MFDGNNSupervisor:
     def evaluateM(self, dataset='val',gumbel_soft=True):
     
         with torch.no_grad():
-            self.MFDGNN_model = self.MFDGNN_model.eval()
+            self.MFTDGNN_model = self.MFTDGNN_model.eval()
 
             val_iterator = self._data['{}_loader'.format(dataset)].get_iterator()
             losses = []
@@ -201,10 +201,10 @@ class MFDGNNSupervisor:
         fre_data_pha = torch.Tensor(fre_data_pha).to(device)
         fre_data = torch.cat((fre_data_amp, fre_data_pha), dim=0)
 
-        self.MFDGNN_model = self.MFDGNN_model.train()
+        self.MFTDGNN_model = self.MFTDGNN_model.train()
         min_train_loss = float('inf')
         wait = 0
-        optimizer = torch.optim.Adam(self.MFDGNN_model.parameters(), lr=base_lr, eps=epsilon)
+        optimizer = torch.optim.Adam(self.MFTDGNN_model.parameters(), lr=base_lr, eps=epsilon)
 
 
         print('Start training ...')
@@ -228,8 +228,8 @@ class MFDGNNSupervisor:
                 # y: shape (batch_size, horizon, num_sensor, input_dim)->(horizon, batch_size, num_sensor * output_dim)
 
                 label = self.use_frequency
-                self.MFDGNN_model.to(device)
-                output, mid_output = self.MFDGNN_model(label, x, self._train_feas,temp, y, batches_complete,fre_data)
+                self.MFTDGNN_model.to(device)
+                output, mid_output = self.MFTDGNN_model(label, x, self._train_feas,temp, y, batches_complete,fre_data)
                 # output(12,64,207)  mid_output(207,207)
                 # if batch_idx % 100 == 1:
                 #    temp = np.maximum(temp * np.exp(-self.ANNEAL_RATE * batch_idx), self.temp_min)
@@ -248,7 +248,7 @@ class MFDGNNSupervisor:
                 # print("batches_complete",batches_complete)
                 loss.backward()
                 # gradient clipping - this does it in place
-                torch.nn.utils.clip_grad_norm_(self.MFDGNN_model.parameters(), self.max_grad_norm)
+                torch.nn.utils.clip_grad_norm_(self.MFTDGNN_model.parameters(), self.max_grad_norm)
                 optimizer.step()
             train_loss=np.mean(losses)
             # print('Epoch [{}/{}] training complete'.format(epoch, self.epochs))
@@ -287,7 +287,7 @@ class MFDGNNSupervisor:
             Y = Y.unsqueeze(0).repeat(self.horizon, 1, 1)
             model.to(device)
             with torch.no_grad():
-                output, _ = self.MFDGNN_model(X, self._train_feas, temp, Y)
+                output, _ = self.MFTDGNN_model(X, self._train_feas, temp, Y)
             output = torch.squeeze(output)
             Y= torch.squeeze(Y)
 
@@ -323,10 +323,10 @@ class MFDGNNSupervisor:
         fre_data_pha = torch.Tensor(fre_data_pha).to(device)
         fre_data = torch.cat((fre_data_amp, fre_data_pha), dim=0)
 
-        self.MFDGNN_model = self.MFDGNN_model.train()
+        self.MFTDGNN_model = self.MFTDGNN_model.train()
         min_train_loss = float('inf')
         wait = 0
-        optimizer = torch.optim.Adam(self.MFDGNN_model.parameters(), lr=base_lr, eps=epsilon)
+        optimizer = torch.optim.Adam(self.MFTDGNN_model.parameters(), lr=base_lr, eps=epsilon)
         # lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=steps, gamma=float(lr_decay_ratio))
         criterion = nn.MSELoss().to(device)
         evaluateL2 = nn.MSELoss().to(device)
@@ -355,7 +355,7 @@ class MFDGNNSupervisor:
                 x = x.permute(1, 0, 2).to(device)
                 y=y.unsqueeze(0).repeat(self.horizon, 1, 1).to(device)
                 label = self.use_frequency
-                self.MFDGNN_model.to(device)
+                self.MFTDGNN_model.to(device)
                 output, mid_output = self.MFDGNN_model(label, x, self._train_feas, temp, y, batches_seen,fre_data)
 
                 scale = Data.scale.expand(output.size(0), output.size(1), Data.m)
@@ -374,7 +374,7 @@ class MFDGNNSupervisor:
                 # print("batches_seen",batches_seen)
                 loss.backward()
                 # gradient clipping - this does it in place
-                torch.nn.utils.clip_grad_norm_(self.MFDGNN_model.parameters(), self.max_grad_norm)
+                torch.nn.utils.clip_grad_norm_(self.MFTDGNN_model.parameters(), self.max_grad_norm)
                 optimizer.step()
             train_loss = np.mean(losses)
             print("training complete")
@@ -384,7 +384,7 @@ class MFDGNNSupervisor:
             print(result)
 
             if (epoch % test_every_n_epochs) == test_every_n_epochs - 1:
-                rse, rae, correlation = self.evaluateS(self.MFDGNN_model,Data,evaluateL2,evaluateL1,temp)
+                rse, rae, correlation = self.evaluateS(self.MFTDGNN_model,Data,evaluateL2,evaluateL1,temp)
 
                 print("Epoch", epoch)
                 print('rse',rse)
