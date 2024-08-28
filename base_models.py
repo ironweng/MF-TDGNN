@@ -32,7 +32,7 @@ class LayerParams:
         return self._biases_dict[length]
 
 
-class DCGRUCell(torch.nn.Module):
+class GraphGRUCell(torch.nn.Module):
     def __init__(self, num_units, max_diffusion_step, num_nodes, nonlinearity='tanh',
                  filter_type="laplacian", use_gc_for_ru=True):
         """
