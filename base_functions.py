@@ -137,7 +137,7 @@ class MFTDGNNSupervisor:
 
             for batch_idx, (x, y) in enumerate(val_iterator):
                 x, y = self._prepare_data(x, y)
-                output, mid_output = self.MFDGNN_model(x, self._train_feas,temp, gumbel_soft)
+                output, mid_output = self.MFTDGNN_model(x, self._train_feas,temp, gumbel_soft)
 
                 loss_t = self._compute_loss(y, output)
                 pred = torch.sigmoid(mid_output.view(mid_output.shape[0] * mid_output.shape[1]))
@@ -356,7 +356,7 @@ class MFTDGNNSupervisor:
                 y=y.unsqueeze(0).repeat(self.horizon, 1, 1).to(device)
                 label = self.use_frequency
                 self.MFTDGNN_model.to(device)
-                output, mid_output = self.MFDGNN_model(label, x, self._train_feas, temp, y, batches_seen,fre_data)
+                output, mid_output = self.MFTDGNN_model(label, x, self._train_feas, temp, y, batches_seen,fre_data)
 
                 scale = Data.scale.expand(output.size(0), output.size(1), Data.m)
                 loss_t = criterion(y*scale,output*scale)
