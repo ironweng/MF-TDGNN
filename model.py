@@ -147,7 +147,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
         return output, torch.stack(hidden_states)
 
 
-class MFDGNNModel(nn.Module, Seq2SeqAttrs):
+class MFTDGNNModel(nn.Module, Seq2SeqAttrs):
     def __init__(self, temperature, **model_kwargs):
         super().__init__()
         Seq2SeqAttrs.__init__(self, **model_kwargs)
