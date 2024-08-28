@@ -4,14 +4,14 @@ from __future__ import print_function
 
 import argparse
 import yaml
-from base_functions import MFDGNNSupervisor
+from base_functions import MFTDGNNSupervisor
 import torch
 
 def main(args):
     with open(args.config_filename) as f:
         supervisor_config = yaml.load(f,Loader=yaml.FullLoader)
         torch.cuda.empty_cache()
-        supervisor = MFDGNNSupervisor(**supervisor_config)
+        supervisor = MFTDGNNSupervisor(**supervisor_config)
         supervisor.trainS()
 
 
