@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-from base_models import DCGRUCell
+from base_models import GraphGRUCell
 import numpy as np
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # device = torch.device("cpu")
@@ -86,7 +86,7 @@ class EncoderModel(nn.Module, Seq2SeqAttrs):
         self.input_dim = int(model_kwargs.get('input_dim', 1))
         self.seq_len = int(model_kwargs.get('seq_len'))  # for the encoder
         self.dcgru_layers = nn.ModuleList(
-            [DCGRUCell(self.rnn_units, self.max_diffusion_step, self.num_nodes,
+            [GraphGRUCell(self.rnn_units, self.max_diffusion_step, self.num_nodes,
                        filter_type=self.filter_type) for _ in range(self.num_rnn_layers)])
 
     def forward(self, inputs, adj, hidden_state=None):
@@ -122,7 +122,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
         self.horizon = int(model_kwargs.get('horizon', 1))  # for the decoder
         self.projection_layer = nn.Linear(self.rnn_units, self.output_dim)
         self.dcgru_layers = nn.ModuleList(
-            [DCGRUCell(self.rnn_units, self.max_diffusion_step, self.num_nodes,
+            [GraphGRUCell(self.rnn_units, self.max_diffusion_step, self.num_nodes,
                        filter_type=self.filter_type) for _ in range(self.num_rnn_layers)])
 
     def forward(self, inputs, adj, hidden_state=None):
