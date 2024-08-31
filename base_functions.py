@@ -88,20 +88,20 @@ class MFTDGNNSupervisor:
 
 
         k = self._train_configparams.get('knn_k')
-        knn_metric = 'cosine'  # 这段代码用于构建一个图（邻接矩阵），k ，即每个传感器与其最近的 k个传感器建立连接。
-        from sklearn.neighbors import kneighbors_graph  # k最近邻用余弦相似度算，使用 kneighbors_graph 函数计算k最近邻图的邻接矩阵。
-        g = kneighbors_graph(train_feas.T, k, metric=knn_metric)  # train_feas.T确保每行代表一个特征（传感器），每列代表一个样本。
-        g = np.array(g.todense(), dtype=np.float32)  # 将稀疏矩阵表示的邻接矩阵转换为密集矩阵，最终g包含了表示传感器之间关联关系的邻接矩阵。
+        knn_metric = 'cosine'  。
+        from sklearn.neighbors import kneighbors_graph  
+        g = kneighbors_graph(train_feas.T, k, metric=knn_metric)  
+        g = np.array(g.todense(), dtype=np.float32) 
         self.adj_mx = torch.Tensor(g).to(device)
         self.num_nodes = int(self._model_configparams.get('num_nodes', 1))
         self.input_dim = int(self._model_configparams.get('input_dim', 1))
         self.seq_len = int(
-            self._model_configparams.get('seq_len'))  # for the encoder 这个参数用于编码器（encoder）。这是MFDGNN模型中用于处理时间序列数据的长度。
+            self._model_configparams.get('seq_len')) 
         self.output_dim = int(self._model_configparams.get('output_dim', 1))
         # self.use_curriculum_learning = bool(
         #     self._model_configparams.get('use_curriculum_learning', False))
         self.horizon = int(
-            self._model_configparams.get('horizon', 1))  # for the decoder 这个参数用于解码器（decoder）。它表示模型在未来的多少个时间步骤上进行预测。
+            self._model_configparams.get('horizon', 1)) 
 
 
         self.MFTDGNN_model=MFTDGNNModel(self.sampling, **self._model_configparams)
